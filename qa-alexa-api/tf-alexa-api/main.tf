@@ -7,7 +7,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = "${file("prod-cicd-infrastructure-467ab13eef50.json")}"
+  credentials = "${file("Terraform-Deployment.json")}"
   project     = "${var.project_id}"
   region      = "${var.region}"
 }
