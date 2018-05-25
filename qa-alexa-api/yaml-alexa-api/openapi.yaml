@@ -1,0 +1,125 @@
+# [START add_project]
+swagger: "2.0"
+info:
+  description: "This is the handler endpoint."
+  title: "Alexa Skill Handler Service"
+  version: "1.0.0"
+host: "alexa-api.endpoints.orders-dev-pj.cloud.goog"
+# [END add_project]
+
+basePath: "/"
+paths:
+  /health:
+    get:
+      tags:
+      - "ask"
+      summary: "Health Check API."
+      operationId: "Health"
+      responses:
+        200:
+          description: "Success"
+      x-google-quota:
+        metricCosts:
+          "health-requests": 1
+  /info:
+    get:
+      tags:
+      - "ask"
+      summary: "Application Info API."
+      operationId: "Info"
+      responses:
+        200:
+          description: "Success"
+      x-google-quota:
+        metricCosts:
+          "health-requests": 1
+  /metrics:
+    get:
+      tags:
+      - "ask"
+      summary: "Application Metrics API."
+      operationId: "Metrics"
+      responses:
+        200:
+          description: "Success"
+      x-google-quota:
+        metricCosts:
+          "health-requests": 1 
+  /v1/alexa/handler:
+    post:
+      tags:
+      - "ask"
+      summary: "Posts an event to Alexa handler"
+      operationId: "ask-handler-dev"
+      responses:
+        200:
+          description: "Success"
+      #security:
+        #- api_key: []
+        #- pj_jwt: []
+      x-google-quota:
+        metricCosts:
+          "create-requests": 1
+securityDefinitions:
+  # This section configures basic authentication with an API key.
+  api_key:
+    type: "apiKey"
+    name: "key"
+    in: "query"
+  # This section configures authentication using Google API Service Accounts
+  # to sign a json web token. This is mostly used for server-to-server
+  # communication.
+  pj_jwt:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    # This must match the 'iss' field in the JWT.
+    x-google-issuer: "Papa Johns"
+    # Update this with your service account's email address.
+    x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/jwk/orders-api-qa%40qa-orders.iam.gserviceaccount.com"
+    # This must match the "aud" field in the JWT. You can add multiple
+    # audiences to accept JWTs from multiple clients.
+    x-google-audiences: "https://www.papajohns.com"
+  # This section configures authentication using Google OAuth2 ID Tokens.
+  # ID Tokens can be obtained using OAuth2 clients, and can be used to access
+  # your API on behalf of a particular user.
+x-google-management:
+  metrics:
+    - name: "read-requests"
+      displayName: "Read Requests"
+      valueType: INT64
+      metricKind: DELTA
+    - name: "create-requests"
+      displayName: "Creat Requests"
+      valueType: INT64
+      metricKind: DELTA
+    - name: "delete-requests"
+      displayName: "Delete Requests"
+      valueType: INT64
+      metricKind: DELTA
+    - name: "health-requests"
+      displayName: "Health Requests"
+      valueType: INT64
+      metricKind: DELTA
+  quota:
+    limits:
+      - name: "read-limit"
+        metric: "read-requests"
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 1000
+      - name: "create-limit"
+        metric: "create-requests"
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 1000
+      - name: "delete-limit"
+        metric: "delete-requests"
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 1000
+      - name: "health-limit"
+        metric: "health-requests"
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 100

@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dev-alexa-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dev-alexa-api
+    spec:
+      volumes:
+      - name: nginx-ssl
+        secret:
+          secretName: nginx-ssl
+      containers:
+        - name: esp
+          image: gcr.io/endpoints-release/endpoints-runtime:1
+          args: [
+            "--http_port", "8081",
+            "--ssl_port", "443",
+            "--backend", "127.0.0.1:8080",
+            "--service", "alexa-api.endpoints.orders-dev-pj.cloud.goog",
+            "--rollout_strategy", "managed",
+          ]
+          ports:
+            - containerPort: 8081
+            - containerPort: 443
+          volumeMounts:
+          - mountPath: /etc/nginx/ssl
+            name: nginx-ssl
+            readOnly: true
+	- envFrom:
+          - configMapRef:
+              name: alexa-config-qa
+        image: us.gcr.io/orders-dev-pj/alexaapi:4
+        imagePullPolicy: IfNotPresent
+        name: alexa-api
+        ports:
+        - containerPort: 8080
+	      protocol: TCP
